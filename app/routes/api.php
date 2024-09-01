@@ -1,35 +1,45 @@
 <?php
 use Core\Routing\Router;
 use App\Controller\Api\AuthController;
-use App\Middleware\AuthMiddleware;
 
-$authController = new AuthController();
-$authMiddleware = new AuthMiddleware();
+// Rota para validar login para cada cliente usando o nome do cliente (API)
+Router::add('POST', '/api/{nomeCliente}/login', function ($nomeCliente) {
+    // Iniciar o buffer de saída para capturar qualquer saída inesperada
+    ob_start();
 
-// Rota para validar login
-Router::add('POST', '/api/login', function () use ($authController) {
-    error_log('Rota /api/login acessada');
+    $authController = new AuthController($nomeCliente);  // Conectar ao banco de dados específico do cliente
     $login = $_POST['login'] ?? '';
     $senha = $_POST['senha'] ?? '';
-    $id_empresa = $_POST['id_empresa'] ?? '';
 
-    error_log('Dados de login recebidos: ' . print_r(['login' => $login, 'id_empresa' => $id_empresa], true));
+    $response = $authController->validarLogin($login, $senha);
 
-    $response = $authController->validarLogin($login, $senha, $id_empresa);
+    // Limpar qualquer saída existente no buffer antes de retornar a resposta JSON
+    ob_end_clean();
 
+    // Definir o cabeçalho para JSON e retornar a resposta
     header('Content-Type: application/json');
     echo json_encode($response);
     error_log('Resposta de login enviada: ' . json_encode($response));
+    exit;
 });
 
-// Exemplo de rota protegida
-Router::add('GET', "/{nomeCliente}/dashboard", function () use ($authMiddleware, $clienteApiController, $nomeCliente) {
-    error_log("Rota protegida /{$nomeCliente}/dashboard acessada");
-    $authMiddleware->verificarAutenticacao();
-    $cliente = $clienteApiController->validarCliente($nomeCliente);
-    if ($cliente) {
-        require_once __DIR__ . "../../public/Dashboard.php";
-    } else {
-        error_log("Cliente {$nomeCliente} não encontrado.");
+// Rota para verificar a sessão do usuário
+Router::add('GET', '/api/verificarSessao', function () {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+    if (isset($_SESSION['usuario_id'])) {
+        echo json_encode(['status' => 'success', 'message' => 'Sessão válida']);
+    } else {
+        header('HTTP/1.1 401 Unauthorized');
+        echo json_encode(['status' => 'error', 'message' => 'Sessão inválida ou expirada']);
+    }
+    exit;
 });
+
+Router::add('GET', '/api/teste', function () {
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'success', 'message' => 'Rota de teste funcionando!']);
+    exit;
+});
+?>

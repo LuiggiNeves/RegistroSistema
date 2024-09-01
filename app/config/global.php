@@ -33,3 +33,5 @@ function base_url($path = '') {
 // Função para carregar configuração JWT
 
 error_log('global.php carregado completamente');
+
+

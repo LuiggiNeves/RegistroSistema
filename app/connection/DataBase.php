@@ -5,36 +5,50 @@ namespace App\Connection;
 use PDO;
 use PDOException;
 
-class Database
-{
+class Database {
     private static $pdo;
 
-    // Método para conectar ao banco de dados usando variáveis de ambiente
-    public static function connect()
-    {
+    // Método para conectar ao banco de dados central
+    public static function connectCentralDB() {
         if (!self::$pdo) {
+            $dbName = $_ENV['DB_NAME'];  // Nome do banco de dados central
             $host = $_ENV['DB_HOST'];
-            $dbName = $_ENV['DB_NAME'];
             $user = $_ENV['DB_USER'];
             $pass = $_ENV['DB_PASS'];
 
             try {
                 self::$pdo = new PDO("mysql:host={$host};dbname={$dbName}", $user, $pass);
                 self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                error_log('Conexão com o banco de dados estabelecida com sucesso.');
+
             } catch (PDOException $e) {
-                error_log('Erro ao conectar ao banco de dados: ' . $e->getMessage());
-                die('Erro ao conectar ao banco de dados. Verifique os logs para mais detalhes.');
+
             }
         }
 
         return self::$pdo;
     }
 
-    // Método para desconectar (opcional, PDO se desconecta automaticamente)
-    public static function disconnect()
-    {
+    // Método para conectar ao banco de dados específico do cliente usando credenciais dinâmicas
+    public static function connectToClientDB($databaseName, $dbUser, $dbPassword) {
+        self::$pdo = null; // Desconectar do banco central para evitar conflito de conexão
+        if (!self::$pdo) {
+            $host = $_ENV['DB_HOST'];
+
+            try {
+                self::$pdo = new PDO("mysql:host={$host};dbname={$databaseName}", $dbUser, $dbPassword);
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            } catch (PDOException $e) {
+
+            }
+        }
+
+        return self::$pdo;
+    }
+
+    // Método para desconectar
+    public static function disconnect() {
         self::$pdo = null;
-        error_log('Conexão com o banco de dados fechada.');
+
     }
 }

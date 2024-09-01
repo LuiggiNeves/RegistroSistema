@@ -1,9 +1,7 @@
 RewriteEngine On
-RewriteBase /RTKSistema
+RewriteBase /RTKSistema/
 
-RewriteCond %{HTTP:Authorization} ^(.*)
-RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
-
+# Redirecionar todas as requisições para index.php, exceto para arquivos e diretórios existentes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.+)$ app/public/index.php [QSA,L]
+RewriteRule ^(.*)$ app/public/index.php [QSA,L]

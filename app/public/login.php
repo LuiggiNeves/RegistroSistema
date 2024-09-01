@@ -7,7 +7,6 @@
     <title>Login</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../app/public/css/Login/login.css">
-
 </head>
 
 <body>
@@ -20,25 +19,24 @@
                             <div class="row g-0">
                                 <div class="col-lg-6">
                                     <div class="card-body p-md-5 mx-md-4">
-
                                         <div class="text-center">
-                                            <img src="<?php echo htmlspecialchars($logoBase64); ?>" style="width: 185px;" alt="logo">
+                                            <img src="<?php echo htmlspecialchars($GLOBALS['logoBase64']); ?>" style="width: 185px;" alt="logo">
                                             <h4 class="mt-1 mb-5 pb-1">Bem-vindo!</h4>
                                         </div>
 
-                                        <form id="loginForm" method="POST" action="">
-                                            <input type="hidden" id="idEmpresa" value="<?php echo htmlspecialchars($idEmpresa); ?>" />
-                                            <input type="hidden" id="nomeCliente" value="<?php echo htmlspecialchars($nomeCliente); ?>" /> <!-- Campo oculto para o nome do cliente -->
+                                        <form id="loginForm" method="POST" action="/<?php echo htmlspecialchars($GLOBALS['cliente']['nome']); ?>/login">
+                                            <input type="hidden" id="idEmpresa" name="id_empresa" value="<?php echo htmlspecialchars($GLOBALS['idEmpresa']); ?>" />
+                                            <input type="hidden" id="nomeCliente" name="nomeCliente" value="<?php echo htmlspecialchars($GLOBALS['cliente']['nome']); ?>" /> <!-- Campo oculto para o nome do cliente -->
 
                                             <p>Entre com o seu acesso</p>
 
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="text" id="nameEnter" class="form-control" placeholder="Digite o seu nome..." required />
-                                                <label class="form-label" for="nameEnter">Nome</label>
+                                                <input type="text" id="nameEnter" name="login" class="form-control" placeholder="Digite o seu nome..." required />
+                                                <label class="form-label" for="nameEnter">Login</label>
                                             </div>
 
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="password" id="passEnter" class="form-control" required />
+                                                <input type="password" id="passEnter" name="senha" class="form-control" required />
                                                 <label class="form-label" for="passEnter">Senha</label>
                                             </div>
 
@@ -51,9 +49,6 @@
                                                 <button class="btn btn-login btn-block fa-lg mb-3" type="submit">Log in</button>
                                             </div>
                                         </form>
-
-
-
                                     </div>
                                 </div>
                                 <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
@@ -72,10 +67,9 @@
         </section>
     </div>
 
-
     <!-- Incluindo o JS do MDBootstrap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-    <script src="../app/public/js/Login/app.js"></script>
+    <script src="../app/public/js/Login/app.js" defer></script>
 </body>
 
 </html>
